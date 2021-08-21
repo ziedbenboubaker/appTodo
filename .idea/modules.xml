@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../appGraphql/.idea/appGraphql.iml" filepath="$PROJECT_DIR$/../appGraphql/.idea/appGraphql.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../appRest/.idea/appRest.iml" filepath="$PROJECT_DIR$/../appRest/.idea/appRest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/apptodo.iml" filepath="$PROJECT_DIR$/.idea/apptodo.iml" />
     </modules>
   </component>
