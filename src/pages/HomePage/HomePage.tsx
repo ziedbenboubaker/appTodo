@@ -1,4 +1,4 @@
-import React, { FormEvent, useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 
 import {
@@ -6,14 +6,17 @@ import {
   GET_LIST_QUERY,
   DELETE_ITEM_MUTATION,
 } from "../../gql";
+import { Form, ListItem } from "../../components";
 
 export function HomePage() {
-  const [listName, setListName] = useState("");
-  const [itemName, setItemName] = useState("");
-
   const [getList, { loading, data }] = useLazyQuery(GET_LIST_QUERY);
 
+  const onError = useCallback(() => {
+    alert("error");
+  }, []);
+
   const [createItem] = useMutation(CREATE_ITEM_MUTATION, {
+    onError,
     optimisticResponse: (vars) => ({
       __typename: "Mutation",
       createItem: {
@@ -38,6 +41,7 @@ export function HomePage() {
   });
 
   const [deleteItem] = useMutation(DELETE_ITEM_MUTATION, {
+    onError,
     optimisticResponse: (vars) => ({
       __typename: "Mutation",
       deleteItem: {
@@ -58,77 +62,61 @@ export function HomePage() {
   });
 
   const onListFormSubmit = useCallback(
-    (e: FormEvent) => {
-      e.preventDefault();
-      const options = { variables: { name: listName } };
+    (name: string) => {
+      const options = { variables: { name } };
 
       getList(options);
     },
-    [getList, listName]
+    [getList]
   );
 
   const onItemFormSubmit = useCallback(
-    (e: FormEvent) => {
-      e.preventDefault();
+    (name: string) => {
       const options = {
-        variables: { input: { listId: data?.getList?.id, name: itemName } },
+        variables: { input: { listId: data?.getList?.id, name } },
       };
 
       createItem(options);
-      setItemName("");
     },
-    [data, createItem, itemName]
+    [data, createItem]
   );
 
-  const onListNameChange = useCallback((event) => {
-    setListName(event.target.value);
-  }, []);
-
-  const onItemNameChange = useCallback((event) => {
-    setItemName(event.target.value);
-  }, []);
+  const onDelete = useCallback(
+    (id: string) => {
+      deleteItem({ variables: { id } });
+    },
+    [deleteItem]
+  );
 
   return (
     <div>
-      <form onSubmit={onListFormSubmit}>
-        <input
-          required
-          value={listName}
-          onChange={onListNameChange}
-          placeholder="please enter a name..."
-        />
-        <button type="submit">Click me</button>
-      </form>
+      <Form
+        buttonTitle="Fetch list"
+        placeholder="Enter list name..."
+        onSubmit={onListFormSubmit}
+      />
 
       {loading ? (
         <p>Loading...</p>
       ) : (
         <>
-          {/*list items*/}
           {data?.getList?.items.map((item: any) => (
-            <div key={item.id}>
-              <p>
-                {item.name}{" "}
-                {typeof item.id === "number" && <span>creating...</span>}
-              </p>
-              <button
-                disabled={typeof item.id === "number"}
-                onClick={() => {
-                  deleteItem({ variables: { id: item.id } });
-                }}
-              >
-                Delete
-              </button>
-            </div>
+            <ListItem
+              id={item.id}
+              key={item.id}
+              name={item.name}
+              optimistic={typeof item.id === "number"}
+              onDelete={onDelete}
+            />
           ))}
 
-          {/*New item form*/}
-          {data?.getList && (
-            <form onSubmit={onItemFormSubmit}>
-              <input value={itemName} required onChange={onItemNameChange} />
-              <button type="submit">Add</button>
-            </form>
-          )}
+          <Form
+            buttonTitle="Create item"
+            placeholder="Enter item name..."
+            hidden={!data?.getList}
+            onSubmit={onItemFormSubmit}
+            resetInputFieldOnSubmit
+          />
         </>
       )}
     </div>

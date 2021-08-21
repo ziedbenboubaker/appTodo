@@ -7430,6 +7430,11 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
+mvp.css@^1.7.4:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/mvp.css/-/mvp.css-1.7.4.tgz#2dbe592bac2a95acb0e4dfc227d26db3a3311bd3"
+  integrity sha512-pfpxSAt938pzXZu1zYDXM7nlUAjbx+zohKSuY7m+qy7077Wt0U49UZ86rgoTAKBU15+/j7Y1Pgplc7FWd18HcQ==
+
 nan@^2.12.1:
   version "2.14.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.2.tgz#f5376400695168f4cc694ac9393d0c9585eeea19"
